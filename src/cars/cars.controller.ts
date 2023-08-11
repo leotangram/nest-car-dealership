@@ -28,7 +28,7 @@ export class CarsController {
 
   @Post()
   createCar(@Body() createDto: CreateCarDto) {
-    return createDto;
+    return this.carsService.create(createDto);
   }
 
   @Patch(':id')
