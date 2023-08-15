@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { Car } from './interfaces/car.interface';
 import { CreateCarDto, UpdateCarDto } from './dto';
@@ -41,5 +45,20 @@ export class CarsService {
     return newCar;
   }
 
-  update(id: string, updateCarDto: UpdateCarDto) {}
+  update(id: string, updateCarDto: UpdateCarDto) {
+    if (updateCarDto.id && updateCarDto.id !== id) {
+      throw new BadRequestException('Id param and body id must be equal');
+    }
+
+    let carDB = this.findOneById(id);
+
+    this.cars = this.cars.map((car) => {
+      if (car.id === carDB.id) {
+        return (carDB = { ...carDB, ...updateCarDto, id });
+      }
+      return car;
+    });
+
+    return carDB;
+  }
 }
